@@ -1,0 +1,515 @@
+// DOM Elements
+const navToggle = document.getElementById('nav-toggle');
+const navMenu = document.getElementById('nav-menu');
+const navLinks = document.querySelectorAll('.nav__link');
+const header = document.querySelector('.header');
+const heroCtaButton = document.querySelector('.hero__cta');
+const socialButtons = document.querySelectorAll('.social-btn');
+const audioPlayButtons = document.querySelectorAll('.audio-card__play');
+const videoCards = document.querySelectorAll('.video-card');
+const newsletterForm = document.querySelector('.newsletter__form');
+const blogCards = document.querySelectorAll('.blog-card');
+
+// Mobile Navigation Toggle
+if (navToggle) {
+    navToggle.addEventListener('click', () => {
+        navMenu.classList.toggle('show');
+        navToggle.classList.toggle('active');
+    });
+}
+
+// Close mobile menu when clicking on nav links
+navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+        navMenu.classList.remove('show');
+        navToggle.classList.remove('active');
+    });
+});
+
+// Fixed smooth scrolling for navigation links
+navLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetId = link.getAttribute('href');
+        
+        if (targetId && targetId.startsWith('#')) {
+            const targetSection = document.querySelector(targetId);
+            
+            if (targetSection) {
+                const headerHeight = header.offsetHeight || 70;
+                const offsetTop = targetSection.offsetTop - headerHeight;
+                
+                window.scrollTo({
+                    top: offsetTop,
+                    behavior: 'smooth'
+                });
+                
+                showNotification(`Navigated to ${targetId.substring(1)} section`);
+            }
+        }
+    });
+});
+
+// Hero CTA Button - scroll to featured article
+if (heroCtaButton) {
+    heroCtaButton.addEventListener('click', () => {
+        const featuredArticle = document.querySelector('.featured-article');
+        if (featuredArticle) {
+            const headerHeight = header.offsetHeight || 70;
+            const offsetTop = featuredArticle.offsetTop - headerHeight;
+            window.scrollTo({
+                top: offsetTop,
+                behavior: 'smooth'
+            });
+        }
+    });
+}
+
+// Header scroll effect
+window.addEventListener('scroll', () => {
+    if (window.scrollY > 100) {
+        header.style.background = 'rgba(255, 255, 255, 0.95)';
+        header.style.backdropFilter = 'blur(10px)';
+    } else {
+        header.style.background = 'var(--color-surface)';
+        header.style.backdropFilter = 'none';
+    }
+});
+
+// Fixed Social Media Sharing
+socialButtons.forEach(button => {
+    button.addEventListener('click', (e) => {
+        e.preventDefault();
+        
+        const platform = button.classList.contains('social-btn--twitter') ? 'twitter' :
+                        button.classList.contains('social-btn--facebook') ? 'facebook' : 'reddit';
+        
+        const articleTitle = document.querySelector('.featured-article__title')?.textContent || 'The Shiva Fantasy League';
+        const articleUrl = window.location.href;
+        
+        let shareUrl = '';
+        
+        switch(platform) {
+            case 'twitter':
+                shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(articleTitle)}&url=${encodeURIComponent(articleUrl)}`;
+                break;
+            case 'facebook':
+                shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(articleUrl)}`;
+                break;
+            case 'reddit':
+                shareUrl = `https://reddit.com/submit?url=${encodeURIComponent(articleUrl)}&title=${encodeURIComponent(articleTitle)}`;
+                break;
+        }
+        
+        if (shareUrl) {
+            window.open(shareUrl, '_blank', 'width=600,height=400,scrollbars=yes,resizable=yes');
+            showNotification(`Sharing on ${platform.charAt(0).toUpperCase() + platform.slice(1)}`, 'success');
+        }
+    });
+});
+
+// Audio Player Functionality
+audioPlayButtons.forEach(button => {
+    button.addEventListener('click', (e) => {
+        e.preventDefault();
+        const audioCard = button.closest('.audio-card');
+        const title = audioCard.querySelector('.audio-card__title')?.textContent || 'Audio';
+        
+        // Toggle play/pause state
+        if (button.textContent === 'â–¶ Play') {
+            button.textContent = 'â¸ Pause';
+            button.style.background = 'var(--color-sports-red)';
+            
+            // Stop all other audio
+            audioPlayButtons.forEach(otherButton => {
+                if (otherButton !== button) {
+                    otherButton.textContent = 'â–¶ Play';
+                    otherButton.style.background = 'var(--color-sports-blue)';
+                }
+            });
+            
+            showNotification(`Now playing: ${title}`, 'success');
+        } else {
+            button.textContent = 'â–¶ Play';
+            button.style.background = 'var(--color-sports-blue)';
+            showNotification('Audio paused');
+        }
+    });
+});
+
+// Video Player Functionality
+videoCards.forEach(card => {
+    card.addEventListener('click', (e) => {
+        e.preventDefault();
+        const title = card.querySelector('.video-card__title')?.textContent || 'Video';
+        showNotification(`Playing: ${title}`, 'success');
+        
+        // Add visual feedback
+        card.style.transform = 'scale(0.98)';
+        setTimeout(() => {
+            card.style.transform = '';
+        }, 150);
+    });
+});
+
+// Blog Card Interactions
+blogCards.forEach(card => {
+    card.addEventListener('click', (e) => {
+        e.preventDefault();
+        const title = card.querySelector('.blog-card__title')?.textContent || 'Article';
+        showNotification(`Opening: ${title}`, 'success');
+        
+        // Add visual feedback
+        card.style.transform = 'translateY(-8px)';
+        setTimeout(() => {
+            card.style.transform = '';
+        }, 300);
+    });
+});
+
+// Fixed Newsletter Form with proper feedback
+if (newsletterForm) {
+    newsletterForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const emailInput = newsletterForm.querySelector('.newsletter__input');
+        const submitButton = newsletterForm.querySelector('.newsletter__submit');
+        const email = emailInput.value.trim();
+        
+        if (email && isValidEmail(email)) {
+            // Show loading state
+            const originalText = submitButton.textContent;
+            submitButton.textContent = 'Subscribing...';
+            submitButton.disabled = true;
+            
+            // Simulate API call
+            setTimeout(() => {
+                showNotification('Successfully subscribed to The Shiva newsletter!', 'success');
+                emailInput.value = '';
+                submitButton.textContent = originalText;
+                submitButton.disabled = false;
+            }, 1000);
+        } else {
+            showNotification('Please enter a valid email address', 'error');
+            emailInput.focus();
+        }
+    });
+}
+
+// Email validation
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+// Enhanced notification system
+function showNotification(message, type = 'info') {
+    // Remove existing notification
+    const existingNotification = document.querySelector('.notification');
+    if (existingNotification) {
+        existingNotification.remove();
+    }
+    
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification notification--${type}`;
+    notification.textContent = message;
+    
+    // Style the notification
+    Object.assign(notification.style, {
+        position: 'fixed',
+        top: '100px',
+        right: '20px',
+        padding: '16px 24px',
+        borderRadius: '8px',
+        color: 'white',
+        fontWeight: '500',
+        fontSize: '14px',
+        zIndex: '10000',
+        transform: 'translateX(100%)',
+        transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+        maxWidth: '300px',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+        cursor: 'pointer'
+    });
+    
+    // Set background color based on type
+    const colors = {
+        info: '#0077B3',
+        success: '#2E7D32',
+        error: '#FF5722'
+    };
+    notification.style.background = colors[type] || colors.info;
+    
+    // Add click to dismiss
+    notification.addEventListener('click', () => {
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 300);
+    });
+    
+    // Add to DOM
+    document.body.appendChild(notification);
+    
+    // Animate in
+    setTimeout(() => {
+        notification.style.transform = 'translateX(0)';
+    }, 10);
+    
+    // Auto remove after 4 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 300);
+        }
+    }, 4000);
+}
+
+// Intersection Observer for animations
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('fade-in-up');
+        }
+    });
+}, observerOptions);
+
+// Observe elements for animation
+const animatedElements = document.querySelectorAll('.blog-card, .audio-card, .video-card, .feature, .standings__table');
+animatedElements.forEach(el => observer.observe(el));
+
+// Active navigation link highlighting
+function updateActiveNavLink() {
+    const sections = document.querySelectorAll('section[id]');
+    const scrollPos = window.scrollY + 100;
+    
+    sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.offsetHeight;
+        const sectionId = section.getAttribute('id');
+        const navLink = document.querySelector(`.nav__link[href="#${sectionId}"]`);
+        
+        if (scrollPos >= sectionTop && scrollPos < sectionTop + sectionHeight) {
+            // Remove active class from all links
+            navLinks.forEach(link => link.classList.remove('active'));
+            // Add active class to current link
+            if (navLink) {
+                navLink.classList.add('active');
+            }
+        }
+    });
+}
+
+// Update active nav link on scroll
+window.addEventListener('scroll', updateActiveNavLink);
+
+// Enhanced Standings table interactions
+const standingsRows = document.querySelectorAll('.standings__row');
+standingsRows.forEach(row => {
+    row.addEventListener('click', (e) => {
+        e.preventDefault();
+        const teamName = row.querySelector('.standings__team')?.textContent || 'Team';
+        const record = row.querySelector('.standings__record')?.textContent || '';
+        showNotification(`${teamName} - Record: ${record}`, 'info');
+        
+        // Visual feedback
+        row.style.background = 'var(--color-secondary)';
+        setTimeout(() => {
+            row.style.background = '';
+        }, 200);
+    });
+});
+
+// Search functionality (placeholder)
+function initSearch() {
+    // Create search input if it doesn't exist
+    const nav = document.querySelector('.nav');
+    if (!nav || nav.querySelector('.search-container')) return;
+    
+    const searchContainer = document.createElement('div');
+    searchContainer.className = 'search-container';
+    searchContainer.style.display = 'none'; // Hidden for now
+    
+    const searchInput = document.createElement('input');
+    searchInput.type = 'text';
+    searchInput.placeholder = 'Search articles...';
+    searchInput.className = 'search-input';
+    
+    searchContainer.appendChild(searchInput);
+    nav.appendChild(searchContainer);
+    
+    // Search functionality
+    searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        if (query.length > 2) {
+            showNotification(`Searching for: ${query}`);
+        }
+    });
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+    // Escape key to close mobile menu
+    if (e.key === 'Escape' && navMenu && navMenu.classList.contains('show')) {
+        navMenu.classList.remove('show');
+        navToggle.classList.remove('active');
+    }
+    
+    // Ctrl/Cmd + K for search (placeholder)
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        showNotification('Search functionality coming soon!');
+    }
+});
+
+// Performance optimization - lazy loading for images
+function lazyLoadImages() {
+    const images = document.querySelectorAll('img[data-src]');
+    if (images.length === 0) return;
+    
+    const imageObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                img.src = img.dataset.src;
+                img.classList.remove('lazy');
+                imageObserver.unobserve(img);
+            }
+        });
+    });
+    
+    images.forEach(img => imageObserver.observe(img));
+}
+
+// Initialize lazy loading
+lazyLoadImages();
+
+// Scroll to top functionality
+function createScrollToTop() {
+    const scrollButton = document.createElement('button');
+    scrollButton.innerHTML = 'â†‘';
+    scrollButton.className = 'scroll-to-top';
+    scrollButton.setAttribute('aria-label', 'Scroll to top');
+    
+    Object.assign(scrollButton.style, {
+        position: 'fixed',
+        bottom: '30px',
+        right: '30px',
+        width: '50px',
+        height: '50px',
+        borderRadius: '50%',
+        border: 'none',
+        background: 'var(--color-sports-blue)',
+        color: 'white',
+        fontSize: '20px',
+        cursor: 'pointer',
+        zIndex: '1000',
+        opacity: '0',
+        transform: 'translateY(100px)',
+        transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)'
+    });
+    
+    document.body.appendChild(scrollButton);
+    
+    // Show/hide based on scroll position
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+            scrollButton.style.opacity = '1';
+            scrollButton.style.transform = 'translateY(0)';
+        } else {
+            scrollButton.style.opacity = '0';
+            scrollButton.style.transform = 'translateY(100px)';
+        }
+    });
+    
+    // Scroll to top functionality
+    scrollButton.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+        showNotification('Scrolled to top');
+    });
+}
+
+// Initialize scroll to top
+createScrollToTop();
+
+// Theme detection and handling
+function handleThemePreference() {
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+    
+    prefersDark.addEventListener('change', (e) => {
+        if (e.matches) {
+            document.documentElement.setAttribute('data-color-scheme', 'dark');
+        } else {
+            document.documentElement.setAttribute('data-color-scheme', 'light');
+        }
+    });
+}
+
+// Initialize theme handling
+handleThemePreference();
+
+// Initialize all functionality when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    // Add loaded class to body for CSS animations
+    document.body.classList.add('loaded');
+    
+    // Initialize search
+    initSearch();
+    
+    // Show welcome notification after a delay
+    setTimeout(() => {
+        showNotification('Welcome to The Shiva Fantasy League!', 'success');
+    }, 1500);
+});
+
+// Handle page visibility changes
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        // Pause any playing audio
+        audioPlayButtons.forEach(button => {
+            if (button.textContent === 'â¸ Pause') {
+                button.textContent = 'â–¶ Play';
+                button.style.background = 'var(--color-sports-blue)';
+            }
+        });
+    }
+});
+
+// Error handling
+window.addEventListener('error', (e) => {
+    console.error('Application error:', e.error);
+    showNotification('An error occurred. Please refresh the page.', 'error');
+});
+
+// Service worker registration (placeholder for future PWA features)
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        // Service worker would be registered here for offline functionality
+        console.log('Service worker support detected');
+    });
+}
+
+// Additional click handlers for better UX
+document.addEventListener('click', (e) => {
+    // Close mobile menu when clicking outside
+    if (navMenu && navMenu.classList.contains('show') && 
+        !navMenu.contains(e.target) && !navToggle.contains(e.target)) {
+        navMenu.classList.remove('show');
+        navToggle.classList.remove('active');
+    }
+});
