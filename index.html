@@ -217,52 +217,68 @@
     </section>
 
     <!-- Video Section -->
-    <section id="video" class="video">
-        <div class="container">
-            <h2 class="section__title">Video Analysis</h2>
-            <div class="video__grid">
-                <div class="video-card">
-                    <div class="video-card__thumbnail">
-                        <div class="video-card__play-button">▶</div>
-                        <span class="video-card__duration">12:45</span>
-                    </div>
-                    <div class="video-card__content">
-                        <h3 class="video-card__title">Jonathan Taylor's Week 3 Explosion: Film Breakdown</h3>
-                    </div>
+   <!-- Video Section -->
+<section id="video" class="video-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Video Content</h2>
+            <p class="section-description">Weekly AI Updates</p>
+        </div>
+        
+        <div class="video-grid">
+            <div class="video-card">
+                <div class="video-card__header">
+                    <h3 class="video-card__title">This Week's Fantasy Recap</h3>
+                    <span class="video-card__duration">5:11</span>
                 </div>
                 
-                <div class="video-card">
-                    <div class="video-card__thumbnail">
-                        <div class="video-card__play-button">▶</div>
-                        <span class="video-card__duration">8:30</span>
-                    </div>
-                    <div class="video-card__content">
-                        <h3 class="video-card__title">Monday Night Miracle: The St. Brown Comeback</h3>
-                    </div>
+                <div class="video-card__player">
+                    <video controls preload="metadata" class="custom-video-player">
+                        <source src="audio/This_Week_s_Fantasy_Recap.mp4" type="video/mp4">
+                        Your browser does not support the video element. 
+                        <a href="audio/This_Week_s_Fantasy_Recap.mp4">Download the video</a>.
+                    </video>
                 </div>
                 
-                <div class="video-card">
-                    <div class="video-card__thumbnail">
-                        <div class="video-card__play-button">▶</div>
-                        <span class="video-card__duration">15:20</span>
-                    </div>
-                    <div class="video-card__content">
-                        <h3 class="video-card__title">Top 5 Plays That Changed Week 3</h3>
-                    </div>
+                <p class="video-card__description">Analyzing every matchup from this week.</p>
+            </div>
+            
+            <div class="video-card">
+                <div class="video-card__header">
+                    <h3 class="video-card__title">Monday Night Miracle: The St. Brown Comeback</h3>
+                    <span class="video-card__duration">8:30</span>
                 </div>
                 
-                <div class="video-card">
-                    <div class="video-card__thumbnail">
-                        <div class="video-card__play-button">▶</div>
-                        <span class="video-card__duration">10:15</span>
-                    </div>
-                    <div class="video-card__content">
-                        <h3 class="video-card__title">League Power Rankings After Week 3</h3>
-                    </div>
+                <div class="video-card__player">
+                    <video controls preload="metadata" class="custom-video-player">
+                        <source src="videos/monday-night-miracle-stbrown.mp4" type="video/mp4">
+                        Your browser does not support the video element. 
+                        <a href="videos/monday-night-miracle-stbrown.mp4">Download the video</a>.
+                    </video>
                 </div>
+                
+                <p class="video-card__description">How Amon-Ra St. Brown's 13.70 points sealed a dramatic comeback victory.</p>
+            </div>
+            
+            <div class="video-card">
+                <div class="video-card__header">
+                    <h3 class="video-card__title">Top 5 Plays That Changed Week 3</h3>
+                    <span class="video-card__duration">15:20</span>
+                </div>
+                
+                <div class="video-card__player">
+                    <video controls preload="metadata" class="custom-video-player">
+                        <source src="videos/top-5-plays-week3.mp4" type="video/mp4">
+                        Your browser does not support the video element. 
+                        <a href="videos/top-5-plays-week3.mp4">Download the video</a>.
+                    </video>
+                </div>
+                
+                <p class="video-card__description">The most impactful fantasy performances that swung matchups across The Shiva league.</p>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
     <!-- Standings Section -->
     <section id="standings" class="standings">
@@ -401,3 +417,4 @@
     <script src="app.js"></script>
 </body>
 </html>
+
