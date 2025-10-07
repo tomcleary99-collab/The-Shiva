@@ -1560,4 +1560,58 @@ html {
 .fade-in-up {
   animation: fadeInUp 0.6s ease-out forwards;
 }
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Shiva - Fantasy Football League Blog</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Add this style block -->
+    <style>
+        /* Mobile-friendly video styles */
+        .custom-video-player {
+            width: 100%;
+            height: auto;
+            max-width: 100%;
+            max-height: 300px; /* Limit height on mobile */
+        }
+
+        /* For tablets and smaller screens */
+        @media (max-width: 768px) {
+            .custom-video-player {
+                max-height: 250px;
+            }
+            
+            .video-grid {
+                grid-template-columns: 1fr; /* Single column on mobile */
+                gap: 1rem;
+            }
+            
+            .video-card {
+                margin-bottom: 1rem;
+            }
+        }
+
+        /* For phones */
+        @media (max-width: 480px) {
+            .custom-video-player {
+                max-height: 200px;
+            }
+            
+            .video-card__header h3 {
+                font-size: 1.1rem; /* Smaller titles on mobile */
+            }
+        }
+
+        /* Responsive container */
+        .video-card__player {
+            position: relative;
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+
 
